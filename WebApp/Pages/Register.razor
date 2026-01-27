@@ -1,0 +1,82 @@
+@page "/register"
+@layout AuthLayout
+@using Entities
+@using BusinessLayer.Abstractions
+@inject IAuthBusiness authBus
+@inject NavigationManager nv
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4" style="width: 450px; border-radius: 20px; border: none;">
+        <div class="text-center mb-4">
+            <i class="bi bi-person-plus-fill text-success" style="font-size: 3rem;"></i>
+            <h3 class="fw-bold">Registracija</h3>
+            <p class="text-muted">Kreirajte nalog za Studfesor</p>
+        </div>
+
+        <EditForm Model="@newUser" OnValidSubmit="HandleRegister">
+            <DataAnnotationsValidator />
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Ime</label>
+                    <InputText class="form-control bg-light border-0" @bind-Value="newUser.FirstName" />
+                    <ValidationMessage For="@(() => newUser.FirstName)" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Prezime</label>
+                    <InputText class="form-control bg-light border-0" @bind-Value="newUser.LastName" />
+                    <ValidationMessage For="@(() => newUser.LastName)" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <InputText class="form-control bg-light border-0" @bind-Value="newUser.Email" placeholder="ime@student.com" />
+                <ValidationMessage For="@(() => newUser.Email)" />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Lozinka</label>
+                <InputText type="password" class="form-control bg-light border-0" @bind-Value="newUser.PasswordHash" />
+                <ValidationMessage For="@(() => newUser.PasswordHash)" />
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm mb-3">
+                Završi registraciju
+            </button>
+
+            <div class="text-center">
+                <button type="button" class="btn btn-link text-decoration-none" @onclick='() => nv.NavigateTo("/login")'>
+                    Ve? imate nalog? Prijavite se
+                </button>
+            </div>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger mt-3 text-center border-0 shadow-sm">
+                @error
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private User newUser = new User { IdRole = 3 }; // 3 = Student po tvom ER modelu
+    private string? error;
+
+    private void HandleRegister()
+    {
+        error = null;
+        var success = authBus.Register(newUser);
+        
+        if (success)
+        {
+            nv.NavigateTo("/login");
+        }
+        else
+        {
+            error = "Ovaj email je ve? zauzet ili podaci nisu validni.";
+        }
+    }
+}
