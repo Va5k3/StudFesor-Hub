@@ -1,0 +1,66 @@
+﻿@using System.ComponentModel.DataAnnotations
+@page "/login"
+@layout BlankLayout
+@inject IAuthBusiness AuthService
+@inject NavigationManager NavManager
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="text-center mb-2">
+    <img src="slike/ikonicaa.jpg" alt="Login Icon" class="login-icon" />
+</div>
+        <h3 class="login-title">Prijava</h3>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <InputText class="form-control" @bind-Value="loginModel.Email" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lozinka</label>
+                <InputText type="password" class="form-control" @bind-Value="loginModel.Password" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+            <button type="submit" class="btn btn-green btn-submit">Prijavi se</button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-3">@errorMessage</div>
+        }
+
+        <div class="text-center mt-3">
+            <a href="/register">Nemate nalog? Registrujte se</a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+
+    private void HandleLogin()
+    {
+        var user = AuthService.Authenticate(loginModel.Email, loginModel.Password);
+        if (user != null)
+        {
+            // Uspešna prijava - redirektuj na dashboard
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "Neispravni email ili lozinka.";
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Email je obavezan")]
+        [EmailAddress(ErrorMessage = "Neispravan email format")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Lozinka je obavezna")]
+        public string Password { get; set; } = string.Empty;
+    }
+}

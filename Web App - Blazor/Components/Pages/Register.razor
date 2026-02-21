@@ -1,0 +1,124 @@
+﻿@page "/register"
+@layout BlankLayout;
+@inject IAuthBusiness AuthService
+@inject NavigationManager NavManager
+@using System.ComponentModel.DataAnnotations
+
+<div class="register-split">
+    <!-- Leva polovina: slika -->
+    <div class="register-image">
+        <img src="slike/slika1.png" alt="Registracija slika" />
+    </div>
+
+    <!-- Desna polovina: forma -->
+    <div class="register-container">
+        <div class="register-card">
+            <h3 class="register-title">Registracija</h3>
+
+            <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ime</label>
+                        <InputText class="form-control" @bind-Value="registerModel.FirstName" />
+                        <ValidationMessage For="@(() => registerModel.FirstName)" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Prezime</label>
+                        <InputText class="form-control" @bind-Value="registerModel.LastName" />
+                        <ValidationMessage For="@(() => registerModel.LastName)" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <InputText class="form-control" @bind-Value="registerModel.Email" />
+                    <ValidationMessage For="@(() => registerModel.Email)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Lozinka</label>
+                    <InputText type="password" class="form-control" @bind-Value="registerModel.Password" />
+                    <ValidationMessage For="@(() => registerModel.Password)" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Uloga</label>
+                    <InputSelect class="form-select" @bind-Value="registerModel.RoleId" TValue="int">
+                        <option value="2">Profesor</option>
+                        <option value="3">Student</option>
+                    </InputSelect>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-submit w-100">Registruj se</button>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                    <div class="alert alert-danger mt-3">@errorMessage</div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                    <div class="alert alert-success mt-3">@successMessage</div>
+            }
+
+            <div class="text-center mt-3">
+                <a href="/login" class="link-register">Već imate nalog? Prijavite se</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterModel registerModel = new() { RoleId = 3 };
+    private string? errorMessage;
+    private string? successMessage;
+
+    private void HandleRegister()
+    {
+        errorMessage = null;
+        successMessage = null;
+
+        var user = new Entities.User
+            {
+                FirstName = registerModel.FirstName,
+                LastName = registerModel.LastName,
+                Email = registerModel.Email,
+                PasswordHash = registerModel.Password,
+                IdRole = registerModel.RoleId
+            };
+
+        bool success = AuthService.Register(user);
+
+        if (success)
+        {
+            successMessage = "Uspešna registracija! Preusmeravamo vas na login...";
+            Task.Delay(2000).ContinueWith(_ => NavManager.NavigateTo("/login"));
+        }
+        else
+        {
+            errorMessage = "Email je već zauzet.";
+        }
+    }
+
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "Ime je obavezno")]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Prezime je obavezno")]
+        public string LastName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email je obavezan")]
+        [EmailAddress(ErrorMessage = "Neispravan email format")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Lozinka je obavezna")]
+        [MinLength(6, ErrorMessage = "Lozinka mora imati minimum 6 karaktera")]
+        public string Password { get; set; } = string.Empty;
+
+        public int RoleId { get; set; } = 3;
+    }
+}
