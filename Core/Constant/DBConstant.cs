@@ -8,6 +8,6 @@ namespace Core.Constant
 {
     public class DBConstant
     {
-        public const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=db;";
+        public const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=studDB;";
     }
 }
