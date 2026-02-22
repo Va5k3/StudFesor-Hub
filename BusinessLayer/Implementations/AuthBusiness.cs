@@ -9,6 +9,7 @@ namespace BusinessLayer.Implementations
     public class AuthBusiness : IAuthBusiness
     {
         private readonly IRepositoryUser _userRepo;
+        
 
         public AuthBusiness(IRepositoryUser userRepo)
         {
@@ -31,6 +32,7 @@ namespace BusinessLayer.Implementations
                 Email = user.Email ?? string.Empty,
                 RoleName = user.IdRole == 1 ? "Admin" : (user.IdRole == 2 ? "Profesor" : "Student")
             };
+            
         }
 
         public bool Register(User user)

@@ -7,5 +7,6 @@ namespace BusinessLayer.Abstractions
     {
         UserDTO? Authenticate(string email, string password);
         bool Register(Entities.User user);
+       
     }
 }

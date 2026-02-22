@@ -1,0 +1,57 @@
+﻿@page "/student"
+@layout MinimalLayout
+@inject NavigationManager Navigation
+
+<div class="student-home-container">
+    <header class="student-header">
+        <h1>Dobrodošli 🎓</h1>
+        <p>Vaša studentska stranica za prikaz aktivnosti i praćenje rasporeda</p>
+    </header>
+
+    <section class="info-banner">
+        <p>
+            Ovde možete lako pristupiti svojim aktivnostima, rasporedu i profilu.
+            Sve na jednom mestu 
+        </p>
+    </section>
+
+   <main class="student-cards">
+    <div class="card" @onclick="GoToActivities">
+    <i class="fas fa-tasks card-icon"></i>
+    <h3>Moje aktivnosti</h3>
+    <p>Pregled aktivnosti</p>
+</div>
+
+    <div class="card" @onclick="GoToSchedule">
+        <i class="fas fa-calendar-alt card-icon"></i>
+        <h3>Raspored</h3>
+        <p>Raspored predavanja</p>
+    </div>
+
+    <div class="card" @onclick="GoToProfile">
+        <i class="fas fa-user-graduate card-icon"></i>
+        <h3>Moj profil</h3>
+        <p>Pregled i izmena ličnih podataka</p>
+    </div>
+</main>
+
+    <footer class="student-footer">
+        <p>📚 StudfesorHub</p>
+    </footer>
+</div>
+@code {
+    void GoToActivities()
+    {
+        Navigation.NavigateTo("/aktivnosti");
+    }
+
+    void GoToSchedule()
+    {
+        Navigation.NavigateTo("/raspored");
+    }
+
+    void GoToProfile()
+    {
+        Navigation.NavigateTo("/profil");
+    }
+}
