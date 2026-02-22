@@ -1,9 +1,8 @@
-﻿using System;
-
-using BusinessLayer.Abstractions;
-using BusinessLayer.DTOs;
+﻿using BusinessLayer.Abstractions;
 using DAL.Abstraction;
 using Entities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BusinessLayer.Implementations
 {
@@ -18,18 +17,7 @@ namespace BusinessLayer.Implementations
 
         public List<ScheduleDTO> GetDetailedSchedule()
         {
-            var rawData = _scheduleRepo.GetAll();
-
-            return rawData.Select(s => new ScheduleDTO
-            {
-                Id = s.IdSchedule ?? 0,
-                Day = s.Day ?? "/",
-                TimeDisplay = s.Time?.ToString(@"hh\:mm") ?? "00:00",
-                Cabinet = s.Cabinet ?? 0,
-                Type = s.Type ?? "/",
-                SubjectName = "Predmet ID: " + (s.IdSubject?.ToString() ?? "N/A"),
-                ProfessorName = "Profesor ID: " + (s.IdProfesor?.ToString() ?? "N/A")
-            }).ToList();
+            return _scheduleRepo.GetAllDetailed();
         }
 
         public bool ValidateAndAdd(Schedule schedule)

@@ -10,6 +10,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddScoped<IAuthBusiness, AuthBusiness>();
+builder.Services.AddScoped<IScheduleBusiness, ScheduleBusiness>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositorySchedule, RepositorySchedule>();
 builder.Services.AddScoped<IRepositoryStudent, RepositoryStudent>();

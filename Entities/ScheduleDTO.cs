@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BusinessLayer.DTOs
+namespace Entities
 {
     public class ScheduleDTO
     {

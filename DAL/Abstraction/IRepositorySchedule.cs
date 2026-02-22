@@ -1,15 +1,12 @@
 ﻿using Core.Interface;
 using Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.Abstraction
 {
     public interface IRepositorySchedule : IRepository<Schedule>
     {
         void InsertSchedule(Schedule schedule);
+        List<ScheduleDTO> GetAllDetailed();
     }
 }

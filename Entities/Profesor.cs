@@ -9,6 +9,6 @@ namespace Entities
         public int IdProf { get; set; }
         public int IdUser { get; set; }
         public string? Section { get; set; }
-        public string? Cabinet { get; set; }
+        public int Cabinet { get; set; }
     }
 }

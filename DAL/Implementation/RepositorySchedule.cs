@@ -11,65 +11,50 @@ namespace DAL.Implementation
     {
         public bool Add(Schedule item)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(DBConstant.ConnectionString))
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
-                sqlConnection.Open();
-                SqlCommand cmd = sqlConnection.CreateCommand();
-                cmd.CommandText = @"INSERT INTO Schedules (IdSubject, IdStudent, IdProfesor, Day, Time, Type, Cabinet) 
-                                    VALUES (@IdSubject, @IdStudent, @IdProfesor, @Day, @Time, @Type, @Cabinet)";
-
-                cmd.Parameters.AddWithValue("@IdSubject", (object)item.IdSubject ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@IdStudent", (object)item.IdStudent ?? DBNull.Value);
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"INSERT INTO Schedules 
+                    (IdSubject, IdStudent, IdProfesor, Day, Time, Type, Cabinet)
+                    VALUES (@IdSubject, @IdStudent, @IdProfesor, @Day, @Time, @Type, @Cabinet)";
+                cmd.Parameters.AddWithValue("@IdSubject",  (object)item.IdSubject  ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@IdStudent",  (object)item.IdStudent  ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@IdProfesor", (object)item.IdProfesor ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Day", (object)item.Day ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Time", item.Time);
-                cmd.Parameters.AddWithValue("@Type", (object)item.Type ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Cabinet", (object)item.Cabinet ?? DBNull.Value);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                cmd.Parameters.AddWithValue("@Day",        (object)item.Day        ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Time",       (object)item.Time       ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Type",       (object)item.Type       ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Cabinet",    (object)item.Cabinet    ?? DBNull.Value);
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
         public bool Delete(int id)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(DBConstant.ConnectionString))
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
-                sqlConnection.Open();
-                SqlCommand cmd = sqlConnection.CreateCommand();
-                cmd.CommandText = "DELETE FROM Schedules WHERE IdSchedule=@id";
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "DELETE FROM Schedules WHERE IdShedule=@id";
                 cmd.Parameters.AddWithValue("@id", id);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
         public Schedule Get(int id)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(DBConstant.ConnectionString))
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
-                sqlConnection.Open();
-                SqlCommand cmd = sqlConnection.CreateCommand();
-                cmd.CommandText = "SELECT * FROM Schedules WHERE IdSchedule=@id";
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"SELECT IdShedule, IdSubject, IdStudent, IdProfesor, 
+                                           Day, Time, Type, Cabinet 
+                                    FROM Schedules WHERE IdShedule=@id";
                 cmd.Parameters.AddWithValue("@id", id);
-
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
-                    {
-                        return new Schedule
-                        {
-                            IdSchedule = reader.GetInt32(0),
-                            IdSubject = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
-                            IdStudent = reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
-                            IdProfesor = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
-                            Day = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            Time = reader.GetTimeSpan(5),
-                            Type = reader.IsDBNull(6) ? null : reader.GetString(6),
-                            Cabinet = reader.IsDBNull(7) ? null : reader.GetInt32(7)
-                        };
-                    }
+                        return MapSchedule(reader);
                 }
                 return null;
             }
@@ -77,27 +62,60 @@ namespace DAL.Implementation
 
         public List<Schedule> GetAll()
         {
-            List<Schedule> list = new List<Schedule>();
-            using (SqlConnection sqlConnection = new SqlConnection(DBConstant.ConnectionString))
+            var list = new List<Schedule>();
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
-                sqlConnection.Open();
-                SqlCommand cmd = sqlConnection.CreateCommand();
-                cmd.CommandText = "SELECT * FROM Schedules";
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"SELECT IdShedule, IdSubject, IdStudent, IdProfesor, 
+                                           Day, Time, Type, Cabinet 
+                                    FROM Schedules";
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        list.Add(MapSchedule(reader));
+                }
+            }
+            return list;
+        }
+
+        public List<ScheduleDTO> GetAllDetailed()
+        {
+            var list = new List<ScheduleDTO>();
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"
+                    SELECT s.IdShedule,
+                           s.Day,
+                           s.Time,
+                           s.Type,
+                           s.Cabinet,
+                           ISNULL(sub.Name, 'N/A')                       AS SubjectName,
+                           ISNULL(u.FirstName + ' ' + u.LastName, 'N/A') AS ProfessorName
+                    FROM Schedules s
+                    LEFT JOIN Subjects  sub ON s.IdSubject  = sub.IdSubject
+                    LEFT JOIN Profesors p   ON s.IdProfesor = p.IdProfesor
+                    LEFT JOIN Users     u   ON p.IdUser     = u.IdUser";
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        list.Add(new Schedule
+                        list.Add(new ScheduleDTO
                         {
-                            IdSchedule = reader.GetInt32(0),
-                            IdSubject = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
-                            IdStudent = reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
-                            IdProfesor = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
-                            Day = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            Time = reader.GetTimeSpan(5),
-                            Type = reader.IsDBNull(6) ? null : reader.GetString(6),
-                            Cabinet = reader.IsDBNull(7) ? null : reader.GetInt32(7),
+                            Id            = reader.GetInt32(reader.GetOrdinal("IdShedule")),
+                            Day           = reader.IsDBNull(reader.GetOrdinal("Day"))
+                                                ? "/" : reader.GetString(reader.GetOrdinal("Day")),
+                            TimeDisplay   = reader.IsDBNull(reader.GetOrdinal("Time"))
+                                                ? "00:00" : reader.GetTimeSpan(reader.GetOrdinal("Time")).ToString(@"hh\:mm"),
+                            Type          = reader.IsDBNull(reader.GetOrdinal("Type"))
+                                                ? "/" : reader.GetString(reader.GetOrdinal("Type")),
+                            Cabinet       = reader.IsDBNull(reader.GetOrdinal("Cabinet"))
+                                                ? 0 : reader.GetInt32(reader.GetOrdinal("Cabinet")),
+                            SubjectName   = reader.GetString(reader.GetOrdinal("SubjectName")),
+                            ProfessorName = reader.GetString(reader.GetOrdinal("ProfessorName"))
                         });
                     }
                 }
@@ -107,32 +125,41 @@ namespace DAL.Implementation
 
         public bool Update(Schedule item)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(DBConstant.ConnectionString))
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
-                sqlConnection.Open();
-                SqlCommand cmd = sqlConnection.CreateCommand();
-                cmd.CommandText = @"UPDATE Schedules SET 
-                                    IdSubject=@IdSubject, IdStudent=@IdStudent, IdProfesor=@IdProfesor, 
-                                    Day=@Day, Time=@Time, Type=@Type, Cabinet=@Cabinet 
-                                    WHERE IdSchedule=@Id";
-
-                cmd.Parameters.AddWithValue("@Id", item.IdSchedule);
-                cmd.Parameters.AddWithValue("@IdSubject", (object)item.IdSubject ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@IdStudent", (object)item.IdStudent ?? DBNull.Value);
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"UPDATE Schedules SET
+                                    IdSubject=@IdSubject, IdStudent=@IdStudent, IdProfesor=@IdProfesor,
+                                    Day=@Day, Time=@Time, Type=@Type, Cabinet=@Cabinet
+                                    WHERE IdShedule=@Id";
+                cmd.Parameters.AddWithValue("@Id",         item.IdSchedule);
+                cmd.Parameters.AddWithValue("@IdSubject",  (object)item.IdSubject  ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@IdStudent",  (object)item.IdStudent  ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@IdProfesor", (object)item.IdProfesor ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Day", (object)item.Day ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Time", item.Time);
-                cmd.Parameters.AddWithValue("@Type", (object)item.Type ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Cabinet", (object)item.Cabinet ?? DBNull.Value);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                return rowsAffected > 0;
+                cmd.Parameters.AddWithValue("@Day",        (object)item.Day        ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Time",       (object)item.Time       ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Type",       (object)item.Type       ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Cabinet",    (object)item.Cabinet    ?? DBNull.Value);
+                return cmd.ExecuteNonQuery() > 0;
             }
         }
 
-        public void InsertSchedule(Schedule schedule)
+        public void InsertSchedule(Schedule schedule) => Add(schedule);
+
+        private static Schedule MapSchedule(SqlDataReader reader)
         {
-            Add(schedule);
+            return new Schedule
+            {
+                IdSchedule = reader.GetInt32(reader.GetOrdinal("IdShedule")),
+                IdSubject  = reader.IsDBNull(reader.GetOrdinal("IdSubject"))  ? null : reader.GetInt32(reader.GetOrdinal("IdSubject")),
+                IdStudent  = reader.IsDBNull(reader.GetOrdinal("IdStudent"))  ? null : reader.GetInt32(reader.GetOrdinal("IdStudent")),
+                IdProfesor = reader.IsDBNull(reader.GetOrdinal("IdProfesor")) ? null : reader.GetInt32(reader.GetOrdinal("IdProfesor")),
+                Day        = reader.IsDBNull(reader.GetOrdinal("Day"))        ? null : reader.GetString(reader.GetOrdinal("Day")),
+                Time       = reader.IsDBNull(reader.GetOrdinal("Time"))       ? null : reader.GetTimeSpan(reader.GetOrdinal("Time")),
+                Type       = reader.IsDBNull(reader.GetOrdinal("Type"))       ? null : reader.GetString(reader.GetOrdinal("Type")),
+                Cabinet    = reader.IsDBNull(reader.GetOrdinal("Cabinet"))    ? null : reader.GetInt32(reader.GetOrdinal("Cabinet"))
+            };
         }
     }
 }
