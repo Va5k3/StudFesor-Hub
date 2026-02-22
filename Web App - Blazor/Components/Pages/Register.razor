@@ -1,8 +1,10 @@
 ﻿@page "/register"
-@layout BlankLayout;
+@rendermode InteractiveServer
+@layout BlankLayout
 @inject IAuthBusiness AuthService
 @inject NavigationManager NavManager
 @using System.ComponentModel.DataAnnotations
+@using BusinessLayer.Abstractions
 
 <div class="register-split">
     <!-- Leva polovina: slika -->
@@ -56,12 +58,12 @@
 
             @if (!string.IsNullOrEmpty(errorMessage))
             {
-                    <div class="alert alert-danger mt-3">@errorMessage</div>
+                <div class="alert alert-danger mt-3">@errorMessage</div>
             }
 
             @if (!string.IsNullOrEmpty(successMessage))
             {
-                    <div class="alert alert-success mt-3">@successMessage</div>
+                <div class="alert alert-success mt-3">@successMessage</div>
             }
 
             <div class="text-center mt-3">
@@ -76,12 +78,14 @@
     private string? errorMessage;
     private string? successMessage;
 
-    private void HandleRegister()
+    private async Task HandleRegister()
     {
         errorMessage = null;
         successMessage = null;
 
-        var user = new Entities.User
+        try
+        {
+            var user = new Entities.User
             {
                 FirstName = registerModel.FirstName,
                 LastName = registerModel.LastName,
@@ -90,16 +94,23 @@
                 IdRole = registerModel.RoleId
             };
 
-        bool success = AuthService.Register(user);
+            bool success = AuthService.Register(user);
 
-        if (success)
-        {
-            successMessage = "Uspešna registracija! Preusmeravamo vas na login...";
-            Task.Delay(2000).ContinueWith(_ => NavManager.NavigateTo("/login"));
+            if (success)
+            {
+                successMessage = "Uspešna registracija! Preusmeravamo vas na login...";
+                StateHasChanged();
+                await Task.Delay(2000);
+                NavManager.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage = "Email je već zauzet.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            errorMessage = "Email je već zauzet.";
+            errorMessage = $"Greška pri registraciji: {ex.Message}";
         }
     }
 

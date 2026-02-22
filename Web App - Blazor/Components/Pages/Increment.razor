@@ -1,0 +1,16 @@
+﻿@page "/increment"
+@rendermode InteractiveServer
+@layout BlankLayout
+
+<h3>Increment</h3>
+<button @onclick="Funkcija">Click me!</button>
+<p>Count: @count</p>
+
+@code {
+    int count = 0;
+    void Funkcija()
+    {
+        count++;
+        Console.WriteLine("Button clicked!");
+    }
+}

@@ -46,22 +46,14 @@ namespace DAL.Implementation
             {
                 conn.Open();
                 SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM Users WHERE IdUser=@id";
+                cmd.CommandText = "SELECT IdUser, IdRole, FirstName, LastName, Email, PasswordHash FROM Users WHERE IdUser=@id";
                 cmd.Parameters.AddWithValue("@id", id);
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        return new User
-                        {
-                            IdUser = reader.GetInt32(0),
-                            IdRole = reader.GetInt32(1),
-                            FirstName = reader.IsDBNull(2) ? null : reader.GetString(2),
-                            LastName = reader.IsDBNull(3) ? null : reader.GetString(3),
-                            Email = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            PasswordHash = reader.IsDBNull(5) ? null : reader.GetString(5)
-                        };
+                        return MapUser(reader);
                     }
                 }
             }
@@ -75,21 +67,13 @@ namespace DAL.Implementation
             {
                 conn.Open();
                 SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM Users";
+                cmd.CommandText = "SELECT IdUser, IdRole, FirstName, LastName, Email, PasswordHash FROM Users";
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        users.Add(new User
-                        {
-                            IdUser = reader.GetInt32(0),
-                            IdRole = reader.GetInt32(1),
-                            FirstName = reader.IsDBNull(2) ? null : reader.GetString(2),
-                            LastName = reader.IsDBNull(3) ? null : reader.GetString(3),
-                            Email = reader.IsDBNull(4) ? null : reader.GetString(4),
-                            PasswordHash = reader.IsDBNull(5) ? null : reader.GetString(5)
-                        });
+                        users.Add(MapUser(reader));
                     }
                 }
             }
@@ -111,6 +95,26 @@ namespace DAL.Implementation
                 cmd.Parameters.AddWithValue("@pass", (object)user.PasswordHash ?? DBNull.Value);
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        private static User MapUser(SqlDataReader reader)
+        {
+            int idUserOrd = reader.GetOrdinal("IdUser");
+            int idRoleOrd = reader.GetOrdinal("IdRole");
+            int firstOrd = reader.GetOrdinal("FirstName");
+            int lastOrd = reader.GetOrdinal("LastName");
+            int emailOrd = reader.GetOrdinal("Email");
+            int passOrd = reader.GetOrdinal("PasswordHash");
+
+            return new User
+            {
+                IdUser = reader.GetInt32(idUserOrd),
+                IdRole = reader.GetInt32(idRoleOrd),
+                FirstName = reader.IsDBNull(firstOrd) ? null : reader.GetString(firstOrd),
+                LastName = reader.IsDBNull(lastOrd) ? null : reader.GetString(lastOrd),
+                Email = reader.IsDBNull(emailOrd) ? null : reader.GetString(emailOrd),
+                PasswordHash = reader.IsDBNull(passOrd) ? null : reader.GetString(passOrd)
+            };
         }
     }
 }

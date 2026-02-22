@@ -1,0 +1,95 @@
+﻿@page "/schedule"
+@rendermode InteractiveServer
+@using BusinessLayer.Abstractions
+@using BusinessLayer.DTOs
+@using DAL.Abstraction
+@using Entities
+@inject IScheduleBusiness ScheduleBusiness
+@inject IRepositorySchedule ScheduleRepo
+@inject IRepositoryStudent StudentRepo
+
+<h3>📅 Raspored</h3>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Dan</th>
+            <th>Vreme</th>
+            <th>Predmet</th>
+            <th>Profesor</th>
+            <th>Kabinet</th>
+            <th>Tip</th>
+            <th>Dodeli studentu</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (schedules != null)
+        {
+            @foreach (var s in schedules)
+            {
+                <tr>
+                    <td>@s.Day</td>
+                    <td>@s.TimeDisplay</td>
+                    <td>@s.SubjectName</td>
+                    <td>@s.ProfessorName</td>
+                    <td>@s.Cabinet</td>
+                    <td>@s.Type</td>
+                    <td>
+                        <select class="form-select form-select-sm" @onchange="(e) => AssignStudent(s.Id, e)">
+                            <option value="">-- Izaberi studenta --</option>
+                            @foreach (var st in students)
+                            {
+                                <option value="@st.IdStudent">@st.StudIndex - @st.Major (God. @st.Year)</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>
+}
+
+@code {
+    private List<ScheduleDTO>? schedules;
+    private List<Student> students = new();
+    private string message = "";
+    private bool isSuccess;
+
+    protected override void OnInitialized()
+    {
+        schedules = ScheduleBusiness.GetDetailedSchedule();
+        students = StudentRepo.GetAll();
+    }
+
+    private void AssignStudent(int scheduleId, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int studentId))
+        {
+            var schedule = ScheduleRepo.Get(scheduleId);
+            if (schedule != null)
+            {
+                schedule.IdStudent = studentId;
+                bool result = ScheduleRepo.Update(schedule);
+
+                if (result)
+                {
+                    message = $"Student (ID: {studentId}) je uspešno dodeljen rasporedu #{scheduleId}.";
+                    isSuccess = true;
+                }
+                else
+                {
+                    message = "Greška pri dodeljivanju studenta.";
+                    isSuccess = false;
+                }
+
+                schedules = ScheduleBusiness.GetDetailedSchedule();
+                StateHasChanged();
+            }
+        }
+    }
+}
