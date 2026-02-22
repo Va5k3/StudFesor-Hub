@@ -11,13 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{DBF5F0EB-5E77-40AC-82CB-6B6C14EC8A82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{F5633410-BD91-408F-8CDD-1C85FFF08F90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", "{F5633410-BD91-408F-8CDD-1C85FFF08F90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScheduleImporter", "ScheduleImporter\ScheduleImporter.csproj", "{A584B5A0-D964-4D48-B5D4-0D2BCFF0DB57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScheduleImporter", "ScheduleImporter\ScheduleImporter.csproj", "{A584B5A0-D964-4D48-B5D4-0D2BCFF0DB57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{033A2512-BBDE-470E-96E7-D6D9A43D4825}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLayer", "BusinessLayer\BusinessLayer.csproj", "{033A2512-BBDE-470E-96E7-D6D9A43D4825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web App - Blazor", "Web App - Blazor\Web App - Blazor.csproj", "{461924CD-1F87-08CB-76C7-A0E517861C00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web App - Blazor", "Web App - Blazor\Web App - Blazor.csproj", "{461924CD-1F87-08CB-76C7-A0E517861C00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -286,3 +286,61 @@ body {
 .alert {
     margin-top: 1rem;
 }
+
+
+/*STUDENT HOME PAGE*/
+.student-home-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 2rem;
+    background-color: #e8f5e9; /* svetlozeleni ton pozadine */
+    min-height: 100vh;
+}
+
+.student-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #2e7d32; /* tamnozeleni naglasak */
+}
+
+    .student-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-header p {
+        font-size: 1.2rem;
+        color: #388e3c;
+    }
+
+.student-cards {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: #a5d6a7; /* srednje zeleni ton */
+    color: #1b5e20;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 250px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+    .card h3 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        font-size: 1rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
