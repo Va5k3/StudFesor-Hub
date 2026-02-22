@@ -97,6 +97,26 @@ namespace DAL.Implementation
             }
         }
 
+        public User? GetByEmail(string email)
+        {
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT IdUser, IdRole, FirstName, LastName, Email, PasswordHash FROM Users WHERE Email=@email";
+                cmd.Parameters.AddWithValue("@email", email);
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return MapUser(reader);
+                    }
+                }
+            }
+            return null;
+        }
+
         private static User MapUser(SqlDataReader reader)
         {
             int idUserOrd = reader.GetOrdinal("IdUser");

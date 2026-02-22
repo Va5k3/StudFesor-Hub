@@ -10,6 +10,7 @@ namespace DAL.Abstraction
     public interface IRepositoryUser
     {
         User? Get(int id);
+        User? GetByEmail(string email);
         List<User> GetAll();
         void Add(User user);
         void Update(User user);

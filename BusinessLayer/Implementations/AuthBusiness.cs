@@ -17,9 +17,10 @@ namespace BusinessLayer.Implementations
 
         public UserDTO? Authenticate(string email, string password)
         {
-            var user = _userRepo.GetAll().FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
+            var user = _userRepo.GetByEmail(email);
 
-            if (user == null) return null;
+            if (user == null || user.PasswordHash != password)
+                return null;
 
             return new UserDTO
             {
