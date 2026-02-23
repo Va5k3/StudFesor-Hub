@@ -18,31 +18,21 @@ namespace DAL.Implementations
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
-                {
-                    conn.Open();
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
+            {
+                conn.Open();
                     Console.WriteLine("SQL CONNECTION OPEN");
 
-                    SqlCommand cmd = conn.CreateCommand();
-                    cmd.CommandText = @"
-                INSERT INTO Activities (Header, Paragraph, Type, Deadline, CreatedUserId)
-                VALUES (@header, @paragraph, @type, @deadline, @userId)";
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = @"INSERT INTO Activities (Header, Paragraph, Type, Deadline, CreatedUserId) 
+                                   VALUES (@header, @paragraph, @type, @deadline, @userId)";
 
-                    cmd.Parameters.AddWithValue("@header", activity.Header);
-                    cmd.Parameters.AddWithValue("@paragraph", activity.Paragraph);
-                    cmd.Parameters.AddWithValue("@type", activity.Type);
-                    cmd.Parameters.AddWithValue("@deadline", activity.Deadline);
-                    cmd.Parameters.AddWithValue("@userId", activity.CreatedUserId);
-
-                    int rows = cmd.ExecuteNonQuery();
-                    Console.WriteLine("INSERT OK, ROWS = " + rows);
-                }
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine("SQL ERROR: " + ex.Message);
-                Console.WriteLine("SQL NUMBER: " + ex.Number);
-                throw;
+                cmd.Parameters.AddWithValue("@header", activity.Header);
+                cmd.Parameters.AddWithValue("@paragraph", activity.Paragraph);
+                cmd.Parameters.AddWithValue("@type", activity.Type);
+                cmd.Parameters.AddWithValue("@deadline", activity.Deadline);
+                cmd.Parameters.AddWithValue("@userId", activity.CreatedUserId);
+                cmd.ExecuteNonQuery();
             }
         }
 

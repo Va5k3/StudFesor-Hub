@@ -7,8 +7,9 @@
 @inject IRepositorySchedule ScheduleRepo
 @inject IRepositoryStudent StudentRepo
 
-<h3>📅 Raspored</h3>
 
+
+<div class="schedule-table-wrapper">
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -18,7 +19,6 @@
             <th>Profesor</th>
             <th>Kabinet</th>
             <th>Tip</th>
-            <th>Dodeli studentu</th>
         </tr>
     </thead>
     <tbody>
@@ -31,23 +31,15 @@
                     <td>@s.TimeDisplay</td>
                     <td>@s.SubjectName</td>
                     <td>@s.ProfessorName</td>
-                    <td>@s.Cabinet</td>
+                    <td>@(s.Cabinet == -1 ? "лаб" : s.Cabinet.ToString())</td>
                     <td>@s.Type</td>
-                    <td>
-                        <select class="form-select form-select-sm" @onchange="(e) => AssignStudent(s.Id, e)">
-                            <option value="">-- Izaberi studenta --</option>
-                            @foreach (var st in students)
-                            {
-                                <option value="@st.IdStudent">@st.StudIndex - @st.Major (God. @st.Year)</option>
-                            }
-                        </select>
-                    </td>
+                  
                 </tr>
             }
         }
     </tbody>
 </table>
-
+</div>
 @if (!string.IsNullOrEmpty(message))
 {
     <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>

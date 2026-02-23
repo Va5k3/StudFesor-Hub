@@ -3,14 +3,17 @@ using BusinessLayer.Implementations;
 using Core.Interface;
 using DAL.Abstraction;
 using DAL.Implementation;
-using DAL.Implementations;
+using Core.Interface;
 using Web_App___Blazor.Components;
+using Web_App___Blazor.Services;
+using DAL.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddScoped<UserSessionService>();
 builder.Services.AddScoped<IAuthBusiness, AuthBusiness>();
 builder.Services.AddScoped<IScheduleBusiness, ScheduleBusiness>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();

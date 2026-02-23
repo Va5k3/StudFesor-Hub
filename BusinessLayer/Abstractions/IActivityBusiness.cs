@@ -10,6 +10,8 @@ namespace BusinessLayer.Abstractions
 {
     public interface IActivityBusiness
     {
+        void Add(ActivityDTO activity, int userId);
+        List<ActivityDTO> GetByUser(int userId);
         List<Activity> GetUserActivities(int userId);
         Activity? GetActivity(int id);
         bool CreateActivity(Activity activity);

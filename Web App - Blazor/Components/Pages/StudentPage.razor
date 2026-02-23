@@ -1,4 +1,5 @@
 ﻿@page "/student"
+@rendermode InteractiveServer
 @layout MinimalLayout
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
@@ -17,11 +18,11 @@
     </section>
 
    <main class="student-cards">
-    <div class="card" @onclick="GoToActivities">
-        <i class="fas fa-calendar-alt card-icon"></i>
-        <h3>Aktivnosti</h3>
-        <p>Praćenje obaveza i aktivnosti</p>
-    </div>
+    <div class="card" @onclick="GoToActivities">   
+    <i class="fas fa-tasks card-icon"></i>
+    <h3>Moje aktivnosti</h3>
+    <p>Pregled aktivnosti</p>
+</div>
 
     <div class="card" @onclick="GoToSchedule">
         <i class="fas fa-calendar-alt card-icon"></i>
