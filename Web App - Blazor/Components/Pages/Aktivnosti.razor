@@ -1,0 +1,150 @@
+﻿@page "/aktivnosti"
+@inject IActivityBusiness ActivityService
+@using BusinessLayer.Abstractions
+@using Web_App___Blazor.Services
+@using Entities
+@rendermode InteractiveServer
+@inject UserSessionService Session
+
+<div class="aktivnosti-wrapper">
+
+    <h3>📋 Aktivnosti</h3>
+
+    @if (!Session.IsLoggedIn)
+    {
+        <div class="alert alert-warning">Morate biti prijavljeni da biste videli aktivnosti.</div>
+    }
+    else
+    {
+        @* ===== FORMA ZA NOVU AKTIVNOST ===== *@
+        <div class="activity-form-card">
+            <h4>Nova aktivnost</h4>
+            <EditForm Model="@activity" OnValidSubmit="SaveActivity" FormName="AddActivityForm">
+                <div class="activity-form-row">
+                    <input class="form-control" placeholder="Naslov" @bind="activity.Header" />
+                    <input class="form-control" placeholder="Opis" @bind="activity.Paragraph" />
+                    <input class="form-control" placeholder="Tip" @bind="activity.Type" />
+                    <input class="form-control" type="datetime-local" @bind="activity.Deadline" />
+                    <button type="submit" class="btn btn-success">SAČUVAJ</button>
+                </div>
+            </EditForm>
+
+            @if (!string.IsNullOrEmpty(message))
+            {
+                <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-2">@message</div>
+            }
+        </div>
+
+        @* ===== LISTA AKTIVNOSTI ===== *@
+        @if (activities == null)
+        {
+            <p>Učitavanje...</p>
+        }
+        else if (activities.Count == 0)
+        {
+            <div class="alert alert-info mt-3">Nema aktivnosti za prikaz.</div>
+        }
+        else
+        {
+            <table class="table table-striped table-bordered mt-4">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Naslov</th>
+                        <th>Opis</th>
+                        <th>Tip</th>
+                        <th>Rok</th>
+                        <th>Akcije</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in activities)
+                    {
+                        <tr class="@(a.Deadline < DateTime.Now ? "table-danger" : "")">
+                            <td>@a.Header</td>
+                            <td>@a.Paragraph</td>
+                            <td><span class="badge bg-success">@a.Type</span></td>
+                            <td>@a.Deadline.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteActivity(a.IdActivity)">
+                                    <i class="fas fa-trash"></i> Obriši
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    }
+</div>
+
+@code {
+    private Activity activity = new();
+    private List<Activity>? activities;
+    private string message = "";
+    private bool isSuccess;
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsLoggedIn)
+        {
+            activity = new Activity
+            {
+                CreatedUserId = Session.UserId,
+                Deadline = DateTime.Now
+            };
+            LoadActivities();
+        }
+    }
+
+    private void LoadActivities()
+    {
+        activities = ActivityService.GetUserActivities(Session.UserId);
+    }
+
+    private void SaveActivity()
+    {
+        try
+        {
+            activity.CreatedUserId = Session.UserId;
+            bool result = ActivityService.CreateActivity(activity);
+            if (result)
+            {
+                message = "Aktivnost uspešno sačuvana!";
+                isSuccess = true;
+
+                activity = new Activity
+                {
+                    CreatedUserId = Session.UserId,
+                    Deadline = DateTime.Now
+                };
+                LoadActivities();
+            }
+            else
+            {
+                message = "Greška pri čuvanju aktivnosti.";
+                isSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            message = "GREŠKA: " + ex.Message;
+            isSuccess = false;
+        }
+    }
+
+    private void DeleteActivity(int id)
+    {
+        bool result = ActivityService.DeleteActivity(id);
+        if (result)
+        {
+            message = "Aktivnost obrisana.";
+            isSuccess = true;
+            LoadActivities();
+        }
+        else
+        {
+            message = "Greška pri brisanju.";
+            isSuccess = false;
+        }
+    }
+}

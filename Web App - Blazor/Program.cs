@@ -2,18 +2,24 @@ using BusinessLayer.Abstractions;
 using BusinessLayer.Implementations;
 using DAL.Abstraction;
 using DAL.Implementation;
+using Core.Interface;
 using Web_App___Blazor.Components;
+using Web_App___Blazor.Services;
+using DAL.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddScoped<UserSessionService>();
 builder.Services.AddScoped<IAuthBusiness, AuthBusiness>();
 builder.Services.AddScoped<IScheduleBusiness, ScheduleBusiness>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositorySchedule, RepositorySchedule>();
 builder.Services.AddScoped<IRepositoryStudent, RepositoryStudent>();
+builder.Services.AddScoped<IActivityBusiness, ActivityBusiness>();
+builder.Services.AddScoped<IRepositoryActivity, RepositoryActivity>();
 
 var app = builder.Build();
 

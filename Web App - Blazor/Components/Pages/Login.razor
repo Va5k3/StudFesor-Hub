@@ -1,10 +1,12 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using BusinessLayer.Abstractions
+@using Web_App___Blazor.Services
 @page "/login"
 @rendermode InteractiveServer
 @layout BlankLayout
 @inject IAuthBusiness AuthService
 @inject NavigationManager NavManager
+@inject UserSessionService Session
 
 <div class="login-container">
     <div class="login-card">
@@ -48,7 +50,8 @@
 
         if (user != null)
         {
-            // Provera uloge i navigacija na odgovarajuću stranicu
+            Session.Login(user);
+
             if (user.RoleId == 3) 
             {
                 NavManager.NavigateTo("/student");
@@ -59,7 +62,6 @@
             }
             else
             {
-                
                 errorMessage = "Nepoznata uloga korisnika.";
             }
         }

@@ -1,4 +1,4 @@
-html, body {
+Ôªøhtml, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -202,7 +202,7 @@ body {
     width: 100%;
 }
 
-/* Poruka o greöci */
+/* Poruka o gre≈°ci */
 .alert {
     margin-top: 1rem;
 }
@@ -282,11 +282,16 @@ body {
         text-decoration: underline;
     }
 
-/* Poruke o greöci i uspehu */
+/* Poruke o gre≈°ci i uspehu */
 .alert {
     margin-top: 1rem;
 }
 
+/*RASPORED*/
+.schedule-table-wrapper {
+    margin: 32px auto;
+    max-width: 1200px;
+}
 
 /*STUDENT HOME PAGE*/
 .student-home-container {
@@ -370,6 +375,8 @@ body {
 }
 
 
+
+
 /*PROFESOR HOME PAGE*/
 .professor-container {
     min-height: 100vh;
@@ -395,7 +402,7 @@ body {
     background: #ffffff;
     width: 280px;
     padding: 2.2rem;
-    border-radius: 0.6rem; /* oötrije ivice */
+    border-radius: 0.6rem; /* o≈°trije ivice */
     text-align: center;
     box-shadow: 0 12px 30px rgba(0,0,0,0.3);
     transition: 0.3s;
@@ -410,4 +417,36 @@ body {
     .card:hover {
         transform: translateY(-6px);
         box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+
+/*AKTIVNOSTI STRANICA*/
+.aktivnosti-wrapper
+{
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.activity-form-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 0.6rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.activity-form-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+    .activity-form-row input {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .activity-form-row button {
+        white-space: nowrap;
     }

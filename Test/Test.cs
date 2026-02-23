@@ -14,7 +14,7 @@ namespace Test
             Console.WriteLine("=== IMPORT SCHEDULE FROM WORD ===");
             IRepositorySchedule scheduleRepository = new RepositorySchedule();
             var importer = new ScheduleImporter.Implementation.ScheduleImporter(scheduleRepository);
-            string filePath = @"C:\Users\Jovana\Downloads\22224-EE-VII.docx";
+            string filePath = @"C:\Users\Vaske\Downloads\IT-VII.docx";
             //TEEEEST PUUUUUSHHH
             try
             {

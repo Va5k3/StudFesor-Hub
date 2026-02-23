@@ -30,7 +30,6 @@ namespace ScheduleImporter.Implementation
                 throw new Exception("Table doesn't exist");
             }
 
-            // ✅ Loguj sve u fajl da izbegnemo encoding problem u konzoli
             using var logWriter = new StreamWriter("import_debug.log", false, System.Text.Encoding.UTF8);
 
             string currentDay = "";
@@ -55,8 +54,8 @@ namespace ScheduleImporter.Implementation
 
                 string time = timeCell.Replace(",", ":");
 
-                // subject + profesor
-                string subjectCell = cells[2].InnerText.Trim();
+                // subject + profesor — read from individual Paragraph/Run elements for better spacing
+                string subjectCell = GetCellText(cells[2]);
                 string subjectName = ExtractSubjectName(subjectCell);
 
                 string profesorPart = ExtractProfesorPart(subjectCell);
@@ -71,9 +70,9 @@ namespace ScheduleImporter.Implementation
                 int subjectId = Lookup.GetSubjectId(subjectName);
                 int profesorId = Lookup.GetProfesorId(profesorFirstName, profesorLastName);
 
-                // ✅ Log u fajl (UTF-8, nema encoding problema)
                 logWriter.WriteLine($"RAW CELL: '{subjectCell}'");
                 logWriter.WriteLine($"  Parsed subject: '{subjectName}' -> Id={subjectId}");
+                logWriter.WriteLine($"  Parsed profesor part: '{profesorPart}'");
                 logWriter.WriteLine($"  Parsed profesor: '{profesorFirstName} {profesorLastName}' -> Id={profesorId}");
                 logWriter.WriteLine();
 
@@ -118,21 +117,51 @@ namespace ScheduleImporter.Implementation
         }
 
         /// <summary>
-        /// Izvlači deo stringa POSLE zatvorene zagrade — to je ime i prezime profesora.
-        /// Npr: "Математика 2(3+0) Марко Марковић" -> "Марко Марковић"
+        /// Reads cell text by joining paragraphs with spaces, avoiding merged/missing spaces
+        /// that InnerText sometimes produces from multiple Run elements.
+        /// </summary>
+        private string GetCellText(TableCell cell)
+        {
+            var paragraphs = cell.Elements<Paragraph>();
+            var parts = new List<string>();
+            foreach (var p in paragraphs)
+            {
+                string pText = string.Join("", p.Elements<Run>().Select(r => r.InnerText));
+                if (!string.IsNullOrWhiteSpace(pText))
+                    parts.Add(pText.Trim());
+            }
+            return string.Join(" ", parts);
+        }
+
+        /// <summary>
+        /// Izvlači deo stringa POSLE zatvorene zagrade i uklanja titule (Др, др, Проф, проф...).
         /// </summary>
         public string ExtractProfesorPart(string raw)
         {
             int closeParenIndex = raw.IndexOf(')');
+            string profesorRaw;
+
             if (closeParenIndex >= 0 && closeParenIndex < raw.Length - 1)
             {
-                return raw.Substring(closeParenIndex + 1).Trim();
+                profesorRaw = raw.Substring(closeParenIndex + 1).Trim();
             }
-            // Fallback: ako nema zagrade, uzmi poslednje dve reči
-            var parts = raw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length >= 2)
-                return parts[^2] + " " + parts[^1];
-            return raw;
+            else
+            {
+                // Fallback: ako nema zagrade, uzmi poslednje dve reči
+                var fallbackParts = raw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                if (fallbackParts.Length >= 2)
+                    profesorRaw = fallbackParts[^2] + " " + fallbackParts[^1];
+                else
+                    return raw;
+            }
+
+            // Ukloni titule: "Др", "др", "Проф", "проф", "Проф.", "др." itd.
+            var titlesToRemove = new[] { "Др", "др", "Др.", "др.", "Проф", "проф", "Проф.", "проф." };
+            var words = profesorRaw.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                   .Where(w => !titlesToRemove.Contains(w))
+                                   .ToArray();
+
+            return string.Join(" ", words);
         }
 
         public string ExtractProfesorFirstName(string profesorPart)

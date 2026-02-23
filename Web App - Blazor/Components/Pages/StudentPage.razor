@@ -1,4 +1,5 @@
 ﻿@page "/student"
+@rendermode InteractiveServer
 @layout MinimalLayout
 @inject NavigationManager Navigation
 
@@ -16,7 +17,7 @@
     </section>
 
    <main class="student-cards">
-    <div class="card" @onclick="GoToActivities">
+    <div class="card" @onclick="GoToActivities">   
     <i class="fas fa-tasks card-icon"></i>
     <h3>Moje aktivnosti</h3>
     <p>Pregled aktivnosti</p>
@@ -47,7 +48,7 @@
 
     void GoToSchedule()
     {
-        Navigation.NavigateTo("/raspored");
+        Navigation.NavigateTo("/schedule");
     }
 
     void GoToProfile()

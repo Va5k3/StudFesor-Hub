@@ -1,0 +1,21 @@
+﻿using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BusinessLayer.DTOs;
+using Entities;
+
+namespace BusinessLayer.Abstractions
+{
+    public interface IActivityBusiness
+    {
+        void Add(ActivityDTO activity, int userId);
+        List<ActivityDTO> GetByUser(int userId);
+        List<Activity> GetUserActivities(int userId);
+        Activity? GetActivity(int id);
+        bool CreateActivity(Activity activity);
+        bool UpdateActivity(Activity activity);
+        bool DeleteActivity(int id);
+        List<Activity> GetUpcomingActivities(int userId);
+        List<Activity> GetOverdueActivities(int userId);
+    }
+}
