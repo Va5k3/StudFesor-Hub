@@ -1,7 +1,9 @@
 using BusinessLayer.Abstractions;
 using BusinessLayer.Implementations;
+using Core.Interface;
 using DAL.Abstraction;
 using DAL.Implementation;
+using DAL.Implementations;
 using Web_App___Blazor.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,8 @@ builder.Services.AddScoped<IScheduleBusiness, ScheduleBusiness>();
 builder.Services.AddScoped<IRepositoryUser, RepositoryUser>();
 builder.Services.AddScoped<IRepositorySchedule, RepositorySchedule>();
 builder.Services.AddScoped<IRepositoryStudent, RepositoryStudent>();
+builder.Services.AddScoped<IActivityBusiness, ActivityBusiness>();
+builder.Services.AddScoped<IRepositoryActivity, RepositoryActivity>();
 
 var app = builder.Build();
 

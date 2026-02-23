@@ -7,9 +7,9 @@ namespace Entities
     public class Activity
     {
         public int IdActivity { get; set; } 
-        public string Header { get; set; }
-        public string Paragraph { get; set; }
-        public string Type { get; set; }
+        public string Header { get; set; } = string.Empty;
+        public string Paragraph { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
         public DateTime Deadline { get; set; }
         public int CreatedUserId { get; set; }
     }

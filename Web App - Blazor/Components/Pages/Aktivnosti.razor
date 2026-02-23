@@ -1,52 +1,45 @@
 ﻿@page "/aktivnosti"
-@using BusinessLayer.Abstractions
 @inject IActivityBusiness ActivityService
-<div class="activities-layout">
+@using Entities
+@rendermode InteractiveServer
 
-    <section class="activities-left">
-        <h2>Moje aktivnosti</h2>
+<h3>Nova aktivnost</h3>
 
-        <EditForm Model="@model" OnValidSubmit="Save">
-            <InputText @bind-Value="model.Header" placeholder="Naslov" />
-            <InputTextArea @bind-Value="model.Paragraph" placeholder="Opis" />
-            <InputDate @bind-Value="model.Deadline" />
-            <button>Sačuvaj</button>
-        </EditForm>
+<EditForm Model="@activity"
+          OnSubmit="SaveActivity"
+          FormName="AddActivityForm">
 
-        <ul>
-            @foreach (var a in activities)
-            {
-                    <li>
-                        <strong>@a.Header</strong><br />
-                    @a.Paragraph<br />
-                        <small>@a.Deadline.ToShortDateString()</small>
-                    </li>
-            }
-        </ul>
-    </section>
+    <input placeholder="Naslov"
+           @bind="activity.Header" />
 
-    <section class="activities-right">
-        <h2>Raspored</h2>
-        <p>(kasnije)</p>
-    </section>
+    <input placeholder="Opis"
+           @bind="activity.Paragraph" />
 
-</div>
+    <input placeholder="Tip"
+           @bind="activity.Type" />
+
+    <button type="submit">SAČUVAJ</button>
+</EditForm>
 
 @code {
-    ActivityDTO model = new();
-    List<ActivityDTO> activities = new();
+    private Activity activity = new Activity
+        {
+            CreatedUserId = 1,
+            Deadline = DateTime.Now
+        };
 
-    int currentUserId = 1; // kasnije iz auth-a
-
-    protected override void OnInitialized()
+    private void SaveActivity()
     {
-        activities = ActivityService.GetByUser(currentUserId);
-    }
+        Console.WriteLine("SAVE ACTIVITY POZVAN");
 
-    void Save()
-    {
-        ActivityService.Add(model, currentUserId);
-        activities.Add(model);
-        model = new ActivityDTO();
+        try
+        {
+            ActivityService.CreateActivity(activity);
+            Console.WriteLine("CREATE ACTIVITY POZVAN");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("GRESKA: " + ex.Message);
+        }
     }
 }

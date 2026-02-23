@@ -8,39 +8,70 @@ namespace BusinessLayer.Implementations
 {
     public class ActivityBusiness : IActivityBusiness
     {
-        private readonly IRepository<Activity> _activityRepo;
-
-        public ActivityBusiness(IRepository<Activity> activityRepo)
+        private readonly IRepositoryActivity _activityRepo;
+        public ActivityBusiness(IRepositoryActivity activityRepo)
         {
             _activityRepo = activityRepo;
         }
-
-        public void Add(ActivityDTO activityDto, int userId)
+        public bool CreateActivity(Activity activity)
         {
-            var newActivity = new Activity
+            try
             {
-                Header = activityDto.Header,
-                Paragraph = activityDto.Paragraph,
-                Type = activityDto.Type,
-                Deadline = activityDto.Deadline,
-                CreatedUserId = userId
-            };
-
-            _activityRepo.Add(newActivity);
+                _activityRepo.Add(activity);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public List<ActivityDTO> GetByUser(int userId)
+        public bool DeleteActivity(int id)
         {
-            return _activityRepo.GetAll()
-                .Where(a => a.CreatedUserId == userId)
-                .Select(a => new ActivityDTO
-                {
-                    Header = a.Header,
-                    Paragraph = a.Paragraph,
-                    Type = a.Type,
-                    Deadline = a.Deadline
-                })
-                .ToList();
+            try
+            {
+                _activityRepo.Delete(id);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public Activity? GetActivity(int id)
+        {
+            return _activityRepo.Get(id); 
+        }
+
+        public List<Activity> GetOverdueActivities(int userId)
+        {
+            var activities = _activityRepo.GetByUserId(userId);
+            return activities.Where(a => a.Deadline < DateTime.Now).ToList();
+        }
+
+        public List<Activity> GetUpcomingActivities(int userId)
+        {
+            var activities = _activityRepo.GetByUserId(userId);
+            return activities.Where(a => a.Deadline >= DateTime.Now).ToList();
+        }
+
+        public List<Activity> GetUserActivities(int userId)
+        {
+            return _activityRepo.GetByUserId(userId);
+        }
+
+        public bool UpdateActivity(Activity activity)
+        {
+            try
+            {
+                _activityRepo.Update(activity);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
