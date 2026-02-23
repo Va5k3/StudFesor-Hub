@@ -22,27 +22,27 @@
         </tr>
     </thead>
     <tbody>
-        @if (schedules != null)
-        {
-            @foreach (var s in schedules)
+            @if (schedules != null)
             {
-                <tr>
-                    <td>@s.Day</td>
-                    <td>@s.TimeDisplay</td>
-                    <td>@s.SubjectName</td>
-                    <td>@s.ProfessorName</td>
-                    <td>@(s.Cabinet == -1 ? "лаб" : s.Cabinet.ToString())</td>
-                    <td>@s.Type</td>
-                  
-                </tr>
+                @foreach (var s in schedules)
+                {
+                        <tr>
+                            <td>@s.Day</td>
+                            <td>@s.TimeDisplay</td>
+                            <td>@s.SubjectName</td>
+                            <td>@s.ProfessorName</td>
+                            <td>@(s.Cabinet == -1 ? "лаб" : s.Cabinet.ToString())</td>
+                            <td>@s.Type</td>
+
+                        </tr>
+                }
             }
-        }
     </tbody>
 </table>
 </div>
 @if (!string.IsNullOrEmpty(message))
 {
-    <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>
+        <div class="alert @(isSuccess ? "alert-success" : "alert-danger") mt-3">@message</div>
 }
 
 @code {

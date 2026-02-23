@@ -1,0 +1,82 @@
+﻿@page "/profil"
+@layout MainLayout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IUserSessionService SessionService
+
+<div class="profile-container">
+    <h2>Moj profil</h2>
+
+    @if (SessionService.CurrentUser == null)
+    {
+            <p class="error-text">Niste prijavljeni.</p>
+    }
+    else
+    {
+            <div class="profile-card">
+                <div class="profile-field">
+                    <label>Ime</label>
+                    <input @bind="SessionService.CurrentUser.FirstName" />
+                </div>
+
+                <div class="profile-field">
+                    <label>Prezime</label>
+                    <input @bind="SessionService.CurrentUser.LastName" />
+                </div>
+
+                <div class="profile-field">
+                    <label>Email</label>
+                    <input @bind="SessionService.CurrentUser.Email" disabled />
+                </div>
+
+                <div class="profile-actions">
+                    <button class="btn-primary" @onclick="SaveProfile">Sačuvaj izmene</button>
+                    <button class="btn-danger" @onclick="ConfirmDelete">Obriši profil</button>
+                    <button class="btn-secondary" @onclick="Logout">Logout</button>
+                </div>
+            </div>
+    }
+</div>
+
+@if (showConfirmDelete)
+{
+        <div class="modal-overlay">
+            <div class="modal">
+                <h4>Potvrda brisanja</h4>
+                <p>Da li ste sigurni da želite da obrišete profil?</p>
+
+                <div class="modal-actions">
+                    <button class="btn-danger" @onclick="DeleteProfile">Da, obriši</button>
+                    <button class="btn-secondary" @onclick="() => showConfirmDelete = false">Otkaži</button>
+                </div>
+            </div>
+        </div>
+}
+
+@code {
+    bool showConfirmDelete = false;
+
+    void SaveProfile()
+    {
+        // TODO: poziv backend servisa (Update user)
+        Console.WriteLine("Profil sačuvan");
+    }
+
+    void ConfirmDelete()
+    {
+        showConfirmDelete = true;
+    }
+
+    void DeleteProfile()
+    {
+        // TODO: backend delete
+        SessionService.CurrentUser = null;
+        Navigation.NavigateTo("/login", true);
+    }
+
+    void Logout()
+    {
+        SessionService.CurrentUser = null;
+        Navigation.NavigateTo("/login", true);
+    }
+}

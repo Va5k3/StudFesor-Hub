@@ -566,3 +566,108 @@ body {
         font-size: 13px;
     }
 }
+
+/*PROFIL*/
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+    .profile-container h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #1f2933;
+    }
+
+.profile-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.profile-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+    .profile-field label {
+        font-size: 0.85rem;
+        color: #4b5563;
+        margin-bottom: 5px;
+    }
+
+    .profile-field input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 0.95rem;
+    }
+
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: #2f855a;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 350px;
+    text-align: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.error-text {
+    text-align: center;
+    color: #dc2626;
+}
