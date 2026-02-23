@@ -1,0 +1,14 @@
+﻿@inject Web_App___Blazor.Services.UserSessionService Session
+@implements IAsyncDisposable
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Session.LoadFromStorageAsync();
+        }
+    }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+}

@@ -14,19 +14,12 @@ namespace DAL.Implementations
     {
         public void Add(Activity activity)
         {
-            Console.WriteLine("USAO U REPOSITORY ADD");
-
-            try
-            {
             using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {
                 conn.Open();
-                    Console.WriteLine("SQL CONNECTION OPEN");
-
                 SqlCommand cmd = conn.CreateCommand();
                 cmd.CommandText = @"INSERT INTO Activities (Header, Paragraph, Type, Deadline, CreatedUserId) 
                                    VALUES (@header, @paragraph, @type, @deadline, @userId)";
-
                 cmd.Parameters.AddWithValue("@header", activity.Header);
                 cmd.Parameters.AddWithValue("@paragraph", activity.Paragraph);
                 cmd.Parameters.AddWithValue("@type", activity.Type);
@@ -36,7 +29,8 @@ namespace DAL.Implementations
             }
         }
 
-        public void Delete(int id)
+
+            public void Delete(int id)
         {
             using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
             {

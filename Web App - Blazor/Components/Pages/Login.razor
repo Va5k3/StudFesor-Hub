@@ -31,7 +31,7 @@
 
         @if (!string.IsNullOrEmpty(errorMessage))
         {
-            <div class="alert alert-danger mt-3">@errorMessage</div>
+                <div class="alert alert-danger mt-3">@errorMessage</div>
         }
 
         <div class="text-center mt-3">
@@ -44,26 +44,20 @@
     private LoginModel loginModel = new();
     private string? errorMessage;
 
-    private void HandleLogin()
+    private async Task HandleLogin()
     {
         var user = AuthService.Authenticate(loginModel.Email, loginModel.Password);
 
         if (user != null)
         {
-            Session.Login(user);
+            await Session.LoginAsync(user);
 
-            if (user.RoleId == 3) 
-            {
+            if (user.RoleId == 3)
                 NavManager.NavigateTo("/student");
-            }
-            else if (user.RoleId == 2) 
-            {
+            else if (user.RoleId == 2)
                 NavManager.NavigateTo("/profesor");
-            }
             else
-            {
                 errorMessage = "Nepoznata uloga korisnika.";
-            }
         }
         else
         {

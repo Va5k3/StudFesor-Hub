@@ -9,10 +9,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Layout\SessionInitializer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BusinessLayer\BusinessLayer.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\DAL\DAL.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Layout\SessionInitializer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Layout\SessionInitializer.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Layout\SessionInitializer.razor" />
   </ItemGroup>
 
 </Project>
