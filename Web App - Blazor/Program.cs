@@ -21,6 +21,8 @@ builder.Services.AddScoped<IRepositorySchedule, RepositorySchedule>();
 builder.Services.AddScoped<IRepositoryStudent, RepositoryStudent>();
 builder.Services.AddScoped<IActivityBusiness, ActivityBusiness>();
 builder.Services.AddScoped<IRepositoryActivity, RepositoryActivity>();
+builder.Services.AddScoped<IUserBusiness, UserBusiness>();
+builder.Services.AddScoped<UserSessionService>();
 
 var app = builder.Build();
 

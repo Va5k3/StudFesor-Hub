@@ -1,20 +1,26 @@
 ﻿@page "/profesor"
+@using Web_App___Blazor.Services
+@using BusinessLayer.DTOs
 @layout MinimalLayout
 @rendermode InteractiveServer
+@inject BusinessLayer.Abstractions.IActivityBusiness ActivityBusiness 
 @inject NavigationManager Navigation
+@inject UserSessionService Session
 
 <div class="profesor-home-container">
     <header class="profesor-header">
-        <h1>Dobrodošli</h1>
+        @if (Session.IsLoggedIn)
+        {
+                    <h1>Dobrodošli, @Session.CurrentUser.FirstName </h1>
+        }
+        else
+        {
+                    <h1>Dobrodošli </h1>
+        }
         <p>Vaša stranica za praćenje aktivnosti i rasporeda</p>
     </header>
 
-    <section class="info-banner-profesor">
-        <p>
-            Ovde možete lako pristupiti svojim aktivnostima, rasporedu i profilu.
-            Sve na jednom mestu 
-        </p>
-    </section>
+
 
    <main class="profesor-cards">
     <div class="card" @onclick="GoToActivities">
@@ -34,12 +40,68 @@
         <p>Pregled i izmena ličnih podataka</p>
     </div>
 </main>
+<div class="notifications-card-profesor">
+    <h4>🔔 Predstojeće aktivnosti</h4>
 
+        @if (!Session.IsLoggedIn)
+        {
+                    <p>Morate biti prijavljeni da vidite obaveštenja.</p>
+        }
+        else if (activities == null)
+        {
+                    <p>Učitavanje...</p>
+        }
+        else if (activities.Count == 0)
+        {
+                    <p>Trenutno nema predstojećih aktivnosti.</p>
+        }
+        else
+        {
+                    <ul>
+                @foreach (var a in activities)
+                {
+                                        <li class="@(a.Deadline <= DateTime.Now.AddHours(24) ? "urgent" : "")">
+                                            <strong>@a.Header</strong> – @a.Deadline.ToString("dd.MM.yyyy HH:mm") (@a.Type)
+                                            <p>@a.Paragraph</p>
+                                        </li>
+                }
+                    </ul>
+        }
+</div>
     <footer class="profesor-footer">
         <p>📚 StudfesorHub</p>
     </footer>
 </div>
 @code {
+    // 1️⃣ Polja
+    private List<ActivityDTO>? activities;
+
+    // 2️⃣ OnInitializedAsync za async pozive
+    protected override async Task OnInitializedAsync()
+    {
+        // Pretplati se na event za promenu sesije
+        Session.OnChange += StateHasChanged;
+
+        // Učitaj korisnika iz storage-a
+        await Session.LoadFromStorageAsync();
+
+        // Ako je korisnik ulogovan, učitaj njegove predstojeće aktivnosti
+        if (Session.IsLoggedIn)
+        {
+            activities = ActivityBusiness.GetByUser(Session.UserId)
+                                        .Where(a => a.Deadline >= DateTime.Now)
+                                        .OrderBy(a => a.Deadline)
+                                        .ToList();
+        }
+    }
+
+    // 3️⃣ Dispose da otpusti event
+    public void Dispose()
+    {
+        Session.OnChange -= StateHasChanged;
+    }
+
+    // 4️⃣ Navigacija
     void GoToActivities()
     {
         Navigation.NavigateTo("/aktivnosti");

@@ -54,5 +54,9 @@ namespace Web_App___Blazor.Services
             await _storage.DeleteAsync(Key);
             OnChange?.Invoke();
         }
+        public async Task ClearUser()
+        {
+            await LogoutAsync();
+        }
     }
 }

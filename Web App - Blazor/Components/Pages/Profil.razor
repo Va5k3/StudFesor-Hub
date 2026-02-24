@@ -1,82 +1,90 @@
 ﻿@page "/profil"
-@layout MainLayout
-@rendermode InteractiveServer
+@using Web_App___Blazor.Services
+@inject IUserBusiness UserService
+@inject UserSessionService Session
 @inject NavigationManager Navigation
-@inject IUserSessionService SessionService
+@rendermode InteractiveServer
 
-<div class="profile-container">
-    <h2>Moj profil</h2>
+<div class="profile-banner">
+        <img src="slike/undraw_personal-info_yzls.png" alt="Student Banner" />
+    </div>
+<div class="profile-wrapper">
 
-    @if (SessionService.CurrentUser == null)
+    <h3>Moj profil</h3>
+
+    @if (!Session.IsLoggedIn)
     {
-            <p class="error-text">Niste prijavljeni.</p>
+            <div class="alert alert-warning">
+                Morate biti prijavljeni.
+            </div>
+    }
+    else if (user == null)
+    {
+            <p>Učitavanje profila...</p>
     }
     else
     {
-            <div class="profile-card">
-                <div class="profile-field">
+            <EditForm Model="@user" OnValidSubmit="SaveProfile">
+                <div class="profile-card">
                     <label>Ime</label>
-                    <input @bind="SessionService.CurrentUser.FirstName" />
-                </div>
+                    <input class="form-control" @bind="user.FirstName" />
 
-                <div class="profile-field">
                     <label>Prezime</label>
-                    <input @bind="SessionService.CurrentUser.LastName" />
-                </div>
+                    <input class="form-control" @bind="user.LastName" />
 
-                <div class="profile-field">
                     <label>Email</label>
-                    <input @bind="SessionService.CurrentUser.Email" disabled />
-                </div>
+                    <input class="form-control" @bind="user.Email" />
 
-                <div class="profile-actions">
-                    <button class="btn-primary" @onclick="SaveProfile">Sačuvaj izmene</button>
-                    <button class="btn-danger" @onclick="ConfirmDelete">Obriši profil</button>
-                    <button class="btn-secondary" @onclick="Logout">Logout</button>
+                    <p class="role">Uloga: <strong>@user.RoleName</strong></p>
+
+                    <button class="btn btn-success mt-3">Sačuvaj izmene</button>
+                    <button class="btn btn-danger mt-3 ms-2" @onclick="DeleteAccount" type="button">
+                        Obriši nalog
+                    </button>
+                    <button class="btn btn-secondary mt-3 ms-2" @onclick="Logout" type="button">
+                        Logout
+                    </button>
                 </div>
-            </div>
+            </EditForm>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+                    <div class="alert @(success ? "alert-success" : "alert-danger") mt-3">
+                @message
+                    </div>
+        }
     }
 </div>
 
-@if (showConfirmDelete)
-{
-        <div class="modal-overlay">
-            <div class="modal">
-                <h4>Potvrda brisanja</h4>
-                <p>Da li ste sigurni da želite da obrišete profil?</p>
-
-                <div class="modal-actions">
-                    <button class="btn-danger" @onclick="DeleteProfile">Da, obriši</button>
-                    <button class="btn-secondary" @onclick="() => showConfirmDelete = false">Otkaži</button>
-                </div>
-            </div>
-        </div>
-}
-
 @code {
-    bool showConfirmDelete = false;
+    private UserDTO? user;
+    private string message = "";
+    private bool success;
 
-    void SaveProfile()
+    protected override void OnInitialized()
     {
-        // TODO: poziv backend servisa (Update user)
-        Console.WriteLine("Profil sačuvan");
+        if (Session.IsLoggedIn)
+        {
+            user = UserService.GetById(Session.UserId);
+        }
     }
 
-    void ConfirmDelete()
+    private void SaveProfile()
     {
-        showConfirmDelete = true;
+        success = UserService.Update(user!);
+        message = success ? "Profil sačuvan." : "Greška pri čuvanju.";
     }
 
-    void DeleteProfile()
+    private void DeleteAccount()
     {
-        // TODO: backend delete
-        SessionService.CurrentUser = null;
+        UserService.Delete(Session.UserId);
+        Session.ClearUser();
         Navigation.NavigateTo("/login", true);
     }
 
-    void Logout()
+    private async Task Logout()
     {
-        SessionService.CurrentUser = null;
+        await Session.LogoutAsync();
         Navigation.NavigateTo("/login", true);
     }
 }
