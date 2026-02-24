@@ -3,10 +3,10 @@ using BusinessLayer.Implementations;
 using Core.Interface;
 using DAL.Abstraction;
 using DAL.Implementation;
-using Core.Interface;
 using Web_App___Blazor.Components;
 using Web_App___Blazor.Services;
 using DAL.Implementations;
+using ScheduleImporter.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,7 @@ builder.Services.AddScoped<IRepositoryStudent, RepositoryStudent>();
 builder.Services.AddScoped<IActivityBusiness, ActivityBusiness>();
 builder.Services.AddScoped<IRepositoryActivity, RepositoryActivity>();
 builder.Services.AddScoped<IUserBusiness, UserBusiness>();
-builder.Services.AddScoped<UserSessionService>();
+builder.Services.AddScoped<IScheduleImporter, ScheduleImporter.Implementation.ScheduleImporter>();
 
 var app = builder.Build();
 

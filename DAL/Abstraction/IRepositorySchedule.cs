@@ -8,5 +8,6 @@ namespace DAL.Abstraction
     {
         void InsertSchedule(Schedule schedule);
         List<ScheduleDTO> GetAllDetailed();
+        bool DeleteAll();
     }
 }

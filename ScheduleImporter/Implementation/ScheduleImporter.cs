@@ -38,6 +38,13 @@ namespace ScheduleImporter.Implementation
             {
                 var cells = row.Elements<TableCell>().ToList();
 
+                // Preskoči redove koji nemaju dovoljno ćelija (spojeni redovi, separatori, itd.)
+                if (cells.Count < 4)
+                {
+                    logWriter.WriteLine($"[SKIP] Red preskočen – samo {cells.Count} ćelija/e.");
+                    continue;
+                }
+
                 // day
                 string dayCell = cells[0].InnerText.Trim();
                 if (!string.IsNullOrWhiteSpace(dayCell))
@@ -54,7 +61,7 @@ namespace ScheduleImporter.Implementation
 
                 string time = timeCell.Replace(",", ":");
 
-                // subject + profesor — read from individual Paragraph/Run elements for better spacing
+                // subject + profesor
                 string subjectCell = GetCellText(cells[2]);
                 string subjectName = ExtractSubjectName(subjectCell);
 
@@ -90,10 +97,17 @@ namespace ScheduleImporter.Implementation
                     Console.WriteLine($"Upozorenje: Profesor '{profesorFirstName} {profesorLastName}' nije pronađen u bazi.");
                 }
 
+                // Validacija TimeSpan formata pre parsiranja
+                if (!TimeSpan.TryParse(time, out TimeSpan parsedTime))
+                {
+                    logWriter.WriteLine($"[SKIP] Neispravan format vremena: '{time}'");
+                    continue;
+                }
+
                 var schedule = new Schedule
                 {
                     Day = currentDay,
-                    Time = TimeSpan.Parse(time),
+                    Time = parsedTime,
                     Type = ExtractType(subjectCell),
                     Cabinet = cabinet,
                     IdSubject = subjectId > 0 ? (int?)subjectId : null,
@@ -116,10 +130,6 @@ namespace ScheduleImporter.Implementation
             Console.WriteLine("\n>> Debug log saved to: import_debug.log");
         }
 
-        /// <summary>
-        /// Reads cell text by joining paragraphs with spaces, avoiding merged/missing spaces
-        /// that InnerText sometimes produces from multiple Run elements.
-        /// </summary>
         private string GetCellText(TableCell cell)
         {
             var paragraphs = cell.Elements<Paragraph>();
@@ -133,9 +143,6 @@ namespace ScheduleImporter.Implementation
             return string.Join(" ", parts);
         }
 
-        /// <summary>
-        /// Izvlači deo stringa POSLE zatvorene zagrade i uklanja titule (Др, др, Проф, проф...).
-        /// </summary>
         public string ExtractProfesorPart(string raw)
         {
             int closeParenIndex = raw.IndexOf(')');
@@ -147,7 +154,6 @@ namespace ScheduleImporter.Implementation
             }
             else
             {
-                // Fallback: ako nema zagrade, uzmi poslednje dve reči
                 var fallbackParts = raw.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 if (fallbackParts.Length >= 2)
                     profesorRaw = fallbackParts[^2] + " " + fallbackParts[^1];
@@ -155,7 +161,6 @@ namespace ScheduleImporter.Implementation
                     return raw;
             }
 
-            // Ukloni titule: "Др", "др", "Проф", "проф", "Проф.", "др." itd.
             var titlesToRemove = new[] { "Др", "др", "Др.", "др.", "Проф", "проф", "Проф.", "проф." };
             var words = profesorRaw.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                                    .Where(w => !titlesToRemove.Contains(w))
@@ -200,9 +205,7 @@ namespace ScheduleImporter.Implementation
             if (raw.ToLower().Contains("лаб"))
                 return -1;
             if (int.TryParse(raw, out int num))
-            {
                 return num;
-            }
             return 0;
         }
     }

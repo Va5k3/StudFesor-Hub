@@ -41,6 +41,18 @@ namespace DAL.Implementation
             }
         }
 
+        public bool DeleteAll()
+        {
+            using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
+            {
+                conn.Open();
+                SqlCommand cmd = conn.CreateCommand();
+                cmd.CommandText = "DELETE FROM Schedules";
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+        }
+
         public Schedule Get(int id)
         {
             using (SqlConnection conn = new SqlConnection(DBConstant.ConnectionString))
