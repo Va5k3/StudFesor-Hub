@@ -73,10 +73,10 @@
     </footer>
 </div>
 @code {
-    // 1️⃣ Polja
+  
     private List<ActivityDTO>? activities;
 
-    // 2️⃣ OnInitializedAsync za async pozive
+    //  OnInitializedAsync za async pozive
     protected override async Task OnInitializedAsync()
     {
         // Pretplati se na event za promenu sesije
@@ -95,13 +95,13 @@
         }
     }
 
-    // 3️⃣ Dispose da otpusti event
+    //  Dispose da otpusti event
     public void Dispose()
     {
         Session.OnChange -= StateHasChanged;
     }
 
-    // 4️⃣ Navigacija
+    // 4 Navigacija
     void GoToActivities()
     {
         Navigation.NavigateTo("/aktivnosti");
