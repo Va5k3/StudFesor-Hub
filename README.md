@@ -1,10 +1,3 @@
-# Sistem-za-upravljanje-profesorskim-i-studentskim-aktivnostima-i-rasporedima
-
-## Ukuljučite u aplikaciju i elektronsku knjigu utisaka na fakultetu, 
-## tipa neka forma: stolica slomljena u 12, voda ne radi, i status da li je sanirano da/ne........................
-
-
-
 
 
 # ER DIJAGRAM
