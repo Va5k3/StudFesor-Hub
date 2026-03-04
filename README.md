@@ -46,16 +46,20 @@ StudFesor Hub is a **Blazor Server** web application built with **C#/.NET** and 
 ## Screenshots
 
 **Landing page**  
-![Landing](image1)
-
-**Schedule**  
-![Schedule](image2)
-
-**Dashboard**  
-![Dashboard](image3)
+![WhatsApp Image 2026-03-04 at 21 57 42](https://github.com/user-attachments/assets/69ea48f3-b9f6-4f1b-a6a7-d200929faac5)
 
 **Login**  
-![Login](image4)
+![WhatsApp Image 2026-03-04 at 21 57 47](https://github.com/user-attachments/assets/b5b4cbbf-81b9-4fec-83d1-63a17e0dc202)
+
+**Dashboard**  
+![WhatsApp Image 2026-03-04 at 21 58 50](https://github.com/user-attachments/assets/ddc3f63d-6f0c-47ad-ada6-1c223e2603e9)
+
+**Schedule**  
+![WhatsApp Image 2026-03-04 at 21 58 52](https://github.com/user-attachments/assets/13453564-adc1-44fc-a043-121dea5d63ea)
+
+
+
+
 
 ---
 
@@ -94,6 +98,4 @@ The connection string is currently defined in code:
 
 ---  
 
-## Author
 
-GitHub: **Va5k3**
