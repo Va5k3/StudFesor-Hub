@@ -18,7 +18,6 @@ StudFesor Hub is a **Blazor Server** web application built with **C#/.NET** and 
   - Admin role planned
 - **Schedule import (.docx)** + schedule overview table
 - **Activity tracking** (create and manage activities)
-- Dashboard view with **upcoming activities**
 
 ---
 
