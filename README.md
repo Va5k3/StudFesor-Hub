@@ -2,7 +2,6 @@
 
 # ER DIJAGRAM
 <img width="1386" height="608" alt="ER-diagram_SI" src="https://github.com/user-attachments/assets/fdb8d4e8-2582-4661-a192-526b861276ce" />
-# StudFesor Hub
 
 StudFesor Hub is a **Blazor Server** web application built with **C#/.NET** and **SQL Server**, designed to help **students and professors** manage academic activities in one place — schedule, activity tracking, and upcoming tasks.
 
