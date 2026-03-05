@@ -1,5 +1,5 @@
 
-StudFesor Hub is a **Blazor Server** web application built with **C#/.NET** and **SQL Server**, designed to help **students and professors** manage academic activities in one place — schedule, activity tracking, and upcoming tasks.
+StudFesor Hub is web application built with **C#/.NET** and **SQL Server**, designed to help **students and professors** manage academic activities in one place — schedule, activity tracking, and upcoming tasks.
 
 > This repository is a **student project** created for learning and portfolio purposes, focusing on practical full‑stack fundamentals (UI, business logic, data access, and persistence).
 
